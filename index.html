@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Social Resource Allocation Task</title>
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
+    <main id="app" aria-live="polite">
+      <section class="start-card">
+        <h1>Social Resource Allocation Task</h1>
+        <p>Enter your participant ID (if you have one), then start the experiment.</p>
+        <label for="participant-id">Participant ID</label>
+        <input id="participant-id" type="text" autocomplete="off" maxlength="80">
+        <button id="start-experiment" class="primary">Start experiment</button>
+        <p class="muted">Use headphones if possible. This button enables the narrated instructions in your browser.</p>
+      </section>
+    </main>
+    <!-- Dependencies required by the hand-coded PsychoJS runtime. -->
+    <script src="jquery.min.js"></script>
+    <script src="jquery-ui.min.js"></script>
+    <script src="jquery.blockUI.js"></script>
+    <script src="log4javascript.js"></script>
+    <script src="preloadjs.min.js"></script>
+    <script src="howler.min.js"></script>
+    <script src="pixi.min.js"></script>
+    <script type="module" src="experiment.js"></script>
+  </body>
+</html>

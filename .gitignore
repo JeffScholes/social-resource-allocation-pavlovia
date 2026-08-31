@@ -1,0 +1,8 @@
+# Local/editor files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Temporary browser-test output
+data/
