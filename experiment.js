@@ -424,7 +424,12 @@ async function ethicalDebrief() {
 async function finishExperiment() {
   render('<h2>Thank you</h2><p>Your responses have been recorded. Select Finish to close the task.</p><div class="actions"><button id="finish" class="primary">Finish</button></div>');
   await waitForButton('#finish');
-  if (psychoJSStarted) psychoJS.quit({ message: '', isCompleted: true });
+  if (psychoJSStarted) {
+    // PsychoJS displays its "saving" and completion dialogs itself. Hide the
+    // hand-coded overlay so it cannot cover those dialogs on Pavlovia.
+    app.style.display = 'none';
+    await psychoJS.quit({ message: '', isCompleted: true });
+  }
 }
 
 async function runExperiment() {
