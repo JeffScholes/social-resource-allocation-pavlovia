@@ -8,7 +8,7 @@ import { Scheduler } from 'https://pavlovia.org/lib/util.js';
 import * as util from 'https://pavlovia.org/lib/util.js';
 
 const EXPERIMENT_NAME = 'Social_Resource_Allocation_Task';
-const VERSION = '0.2';
+const VERSION = '0.3';
 const N_TRIALS = 10;
 const STARTING_BALANCE = 1000;
 const REPAIR_AMOUNT = 300;
@@ -239,8 +239,8 @@ function initialiseHiddenTargets() {
   const johnYouth = Math.random() < 0.5;
   return {
     groups: {
-      youth: { threshold: youthLenient ? 0.4 : 0.6 },
-      sports: { threshold: youthLenient ? 0.6 : 0.4 },
+      youth: { threshold: youthLenient ? 0.4 : 0.6, assignment: youthLenient ? 'lenient' : 'strict' },
+      sports: { threshold: youthLenient ? 0.6 : 0.4, assignment: youthLenient ? 'strict' : 'lenient' },
     },
     individuals: { john: johnYouth ? 'youth' : 'sports', julia: johnYouth ? 'sports' : 'youth' },
   };
@@ -248,10 +248,12 @@ function initialiseHiddenTargets() {
 
 function feedbackFor(trial, choice, hidden) {
   const evaluatorGroup = trial.type === 'group' ? trial.id : hidden.individuals[trial.id];
-  const threshold = hidden.groups[evaluatorGroup].threshold;
+  const approvalCurve = hidden.groups[evaluatorGroup];
+  const threshold = approvalCurve.threshold;
   const probability = 1 / (1 + Math.exp(-12 * (choice.generosity - threshold)));
   return {
     evaluator_group: evaluatorGroup,
+    strict_lenient_assignment: approvalCurve.assignment,
     threshold,
     approval_probability: probability,
     approved: Math.random() < probability,
@@ -377,6 +379,7 @@ async function runTrials() {
       target_type: trial.type,
       target_name: trial.name,
       evaluator_group: feedback.evaluator_group,
+      strict_lenient_assignment: feedback.strict_lenient_assignment,
       self_amount: allocation.choice.self_amount,
       target_amount: allocation.choice.target_amount,
       generosity: allocation.choice.generosity,
