@@ -424,14 +424,26 @@ async function ethicalDebrief() {
 async function finishExperiment() {
   render('<h2>Thank you</h2><p>Your responses have been recorded. Select Finish to close the task.</p><div class="actions"><button id="finish" class="primary">Finish</button></div>');
   await waitForButton('#finish');
-  if (psychoJSStarted) {
-    // Keep a visible, non-interactive page on screen while PsychoJS submits
-    // the data and closes the Pavlovia session. This prevents participants
-    // from mistaking a blank page for completion and closing too early.
-    render('<h2>Saving your responses…</h2><p>Please keep this page open while your session is submitted.</p>');
-    // PsychoJS uses #root (provided by index.html) to show its final,
-    // acknowledged completion dialog after the server has confirmed saving.
-    await psychoJS.quit({ message: '', isCompleted: true });
+  if (!psychoJSStarted) return;
+
+  // Submit and close the Pavlovia session directly. PsychoJS.quit() also
+  // creates jQuery UI dialogs; those are unsuitable for this hand-coded DOM
+  // interface and previously obscured the actual completion error.
+  render('<h2>Saving your responses…</h2><p>Please keep this page open while your session is submitted.</p>');
+  try {
+    psychoJS.experiment.experimentEnded = true;
+    psychoJS._scheduler.stop();
+    if (psychoJS.getEnvironment() === PsychoJS.Environment.SERVER) {
+      window.removeEventListener('beforeunload', psychoJS.beforeunloadCallback);
+    }
+    await psychoJS.experiment.save();
+    if (psychoJS.getEnvironment() === PsychoJS.Environment.SERVER) {
+      await psychoJS.serverManager.closeSession(true);
+    }
+    render('<h2>Thank you</h2><p>Your responses have been submitted successfully. You may now close this page.</p>');
+  } catch (error) {
+    const details = error?.error?.message || error?.message || error?.context || String(error);
+    render(`<h2>We could not submit your responses</h2><p class="error">${escapeHtml(details)}</p><p>Please take a screenshot of this message and contact the researcher before closing this page.</p>`);
   }
 }
 
