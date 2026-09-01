@@ -77,6 +77,9 @@ label { display: block; text-align: left; font-weight: 700; }
 .feedback.bad { color: #ff7777; }
 .decision-row { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; margin-top: 28px; }
 .decision-row .primary { min-width: 200px; }
+.prediction-target { width: min(310px, 100%); margin: 22px auto 0; }
+.vertical-choices { display: grid; gap: 14px; width: min(580px, 100%); margin: 30px auto 0; }
+.vertical-choices .primary { width: 100%; }
 .scale { display: flex; justify-content: center; flex-wrap: wrap; gap: 10px; margin: 22px 0; }
 .rating-option { min-width: 48px; padding: 12px 16px; }
 .likert-row { display: grid; grid-template-columns: minmax(180px, 1fr) auto; gap: 18px; align-items: center; text-align: left; border-top: 1px solid #555; padding: 16px 0; }
@@ -88,6 +91,7 @@ video { display: block; width: 100%; max-height: min(60vh, 540px); background: #
 .error { color: #ff9292; white-space: pre-line; }
 .question { text-align: left; margin: 26px 0; }
 .question p { margin-bottom: 8px; }
+.slider-labels { display: flex; justify-content: space-between; width: 100%; margin-top: -12px; }
 @media (max-width: 650px) {
   #app { padding: 12px; }
   .panel, .start-card { padding: 24px 18px; }

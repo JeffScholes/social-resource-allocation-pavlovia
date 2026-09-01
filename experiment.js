@@ -264,7 +264,7 @@ function targetCard(trial) {
 }
 
 async function chooseAllocation(trial, balance) {
-  const choices = trial.split_options.map((option) => `<button class="choice allocation" data-value="${option.id}">Keep £${option.self_amount} for yourself\nGive £${option.target_amount} to ${escapeHtml(trial.name)}</button>`).join('');
+  const choices = trial.split_options.map((option) => `<button class="choice allocation" data-value="${option.id}">Keep £${option.self_amount}\nGive £${option.target_amount}</button>`).join('');
   render(`<p class="fund">Your personal fund: £${balance.toFixed(2)}</p><h2>Choose how much to keep and how much to give</h2>
     <div class="trial-grid"><div class="choices">${choices}</div>${targetCard(trial)}</div>`);
   const onset = nowSeconds();
@@ -276,7 +276,7 @@ async function choosePrediction(trial) {
   const question = trial.type === 'group'
     ? `Do the ${trial.name} representatives think your decision was socially appropriate?`
     : `Does ${trial.name} think your decision treated them fairly?`;
-  render(`<h2>${question}</h2><div class="trial-grid"><div class="decision-row"><button class="primary prediction" data-value="approve">YES</button><button class="primary prediction" data-value="disapprove">NO</button></div>${targetCard(trial)}</div>`);
+  render(`<h2>${question}</h2><div class="prediction-target">${targetCard(trial)}</div><div class="decision-row"><button class="primary prediction" data-value="approve">YES</button><button class="primary prediction" data-value="disapprove">NO</button></div>`);
   const onset = nowSeconds();
   const prediction = await waitForSelection('.prediction');
   return { prediction, responseTime: nowSeconds() - onset };
@@ -346,7 +346,7 @@ async function emotionProbe() {
 }
 
 async function chooseRepair(trial) {
-  render(`<h2>Would you like to repair this decision?</h2><p>Repairing costs £${REPAIR_AMOUNT} from your personal fund.</p><div class="trial-grid"><div class="decision-row"><button class="primary repair" data-value="repair">Repair decision</button><button class="primary repair" data-value="none">Do not repair</button></div>${targetCard(trial)}</div>`);
+  render(`<h2>What would you like to do?</h2><p>Giving money costs £${REPAIR_AMOUNT} from your personal fund.</p><div class="vertical-choices"><button class="primary repair" data-value="target">Give £${REPAIR_AMOUNT} to ${escapeHtml(trial.name)}</button><button class="primary repair" data-value="community">Give £${REPAIR_AMOUNT} to future community projects</button><button class="primary repair" data-value="none">Do nothing</button></div>`);
   const onset = nowSeconds();
   const repairChoice = await waitForSelection('.repair');
   return { repairChoice, responseTime: nowSeconds() - onset };
@@ -370,7 +370,7 @@ async function runTrials() {
     let repair = { repairChoice: '', responseTime: '' };
     if (!feedback.approved) {
       repair = await chooseRepair(trial);
-      if (repair.repairChoice === 'repair') balance -= REPAIR_AMOUNT;
+      if (repair.repairChoice !== 'none') balance -= REPAIR_AMOUNT;
     }
     writeEvent('trial', {
       trial_num: trial.trial_num,
@@ -403,7 +403,7 @@ async function runTrials() {
 }
 
 async function pilotChecks() {
-  render(`<h2>Final questions</h2><div class="question"><p>How real did the evaluations in this section feel to you?</p><input id="believability" type="range" min="0" max="100" value="50"><p class="muted">Not at all real — Completely real</p></div>
+  render(`<h2>Final questions</h2><div class="question"><p>How real did the evaluations in this section feel to you?</p><input id="believability" type="range" min="0" max="100" value="50"><div class="slider-labels muted"><span>Not at all real</span><span>Completely real</span></div></div>
     <div class="question"><label for="evaluators">In your own words, who were the evaluators in this task, and what did they base their decisions on?</label><textarea id="evaluators"></textarea></div>
     <div class="question"><label for="visibility">Who could see each type of decision you made?</label><textarea id="visibility"></textarea></div><div class="actions"><button id="continue" class="primary">Continue</button></div>`);
   await waitForButton('#continue');
