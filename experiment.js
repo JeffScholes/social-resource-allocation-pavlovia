@@ -429,11 +429,9 @@ async function finishExperiment() {
     // the data and closes the Pavlovia session. This prevents participants
     // from mistaking a blank page for completion and closing too early.
     render('<h2>Saving your responses…</h2><p>Please keep this page open while your session is submitted.</p>');
+    // PsychoJS uses #root (provided by index.html) to show its final,
+    // acknowledged completion dialog after the server has confirmed saving.
     await psychoJS.quit({ message: '', isCompleted: true });
-    // PsychoJS has now completed its save/close sequence. Its own final
-    // dialog can sit behind this hand-coded interface, so give participants a
-    // clear confirmation here instead.
-    render('<h2>Thank you</h2><p>Your responses have been submitted successfully. You may now close this page.</p>');
   }
 }
 

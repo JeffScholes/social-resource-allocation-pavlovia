@@ -20,6 +20,9 @@ button:disabled { cursor: default; opacity: .55; }
   z-index: 2;
 }
 
+#root { position: fixed; inset: 0; z-index: 10; }
+#root:empty { pointer-events: none; }
+
 canvas { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
 
 .panel, .start-card {
